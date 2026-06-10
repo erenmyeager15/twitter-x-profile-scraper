@@ -1,0 +1,57 @@
+{
+  "actorSpecification": 1,
+  "name": "twitter-x-profile-scraper",
+  "title": "Twitter / X Profile & Tweets Scraper - No Login",
+  "description": "Scrape public Twitter (X) profiles and tweets without login or API keys. Get followers, following, bio, verified status, join date, location, and recent tweets with likes, retweets, replies, views, media, hashtags, and mentions. Fast, bulk, pay per profile.",
+  "version": "1.0",
+  "dockerfile": "Dockerfile",
+  "input": "../INPUT_SCHEMA.json",
+  "pricingInfo": {
+    "pricingModel": "PAY_PER_EVENT",
+    "pricingPerEvent": {
+      "actorChargeEvents": {
+        "profile-scraped": {
+          "eventTitle": "Profile scraped",
+          "eventDescription": "Charged once per X/Twitter profile scraped (includes profile data and its recent tweets).",
+          "eventPriceUsd": 0.004,
+          "isPrimaryEvent": true,
+          "isOneTimeEvent": false
+        }
+      }
+    }
+  },
+  "categories": ["SOCIAL_MEDIA", "MARKETING", "LEAD_GENERATION"],
+  "minMemoryMbytes": 2048,
+  "maxMemoryMbytes": 8192,
+  "defaultRunOptions": {
+    "memoryMbytes": 4096,
+    "timeoutSecs": 43200
+  },
+  "storages": {
+    "dataset": {
+      "actorSpecification": 1,
+      "views": {
+        "profiles": {
+          "title": "Scraped Profiles",
+          "transformation": {
+            "fields": ["username", "displayName", "bio", "followersCount", "followingCount", "tweetsCount", "likesCount", "joinedDate", "location", "websiteUrl", "verifiedBadge", "blueCheckmark", "profileImageUrl", "profileUrl", "scrapedAt"]
+          },
+          "display": {
+            "component": "table",
+            "properties": {
+              "username": { "label": "Username", "format": "text" },
+              "displayName": { "label": "Name", "format": "text" },
+              "followersCount": { "label": "Followers", "format": "number" },
+              "followingCount": { "label": "Following", "format": "number" },
+              "tweetsCount": { "label": "Tweets", "format": "number" },
+              "location": { "label": "Location", "format": "text" },
+              "verifiedBadge": { "label": "Verified", "format": "boolean" },
+              "profileUrl": { "label": "Profile", "format": "link" },
+              "scrapedAt": { "label": "Scraped At", "format": "date" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

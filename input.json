@@ -1,0 +1,10 @@
+{
+  "usernames": ["elonmusk"],
+  "maxTweetsPerProfile": 10,
+  "includeReplies": false,
+  "includeRetweets": false,
+  "proxyConfiguration": {
+    "useApifyProxy": true,
+    "apifyProxyGroups": ["RESIDENTIAL"]
+  }
+}
