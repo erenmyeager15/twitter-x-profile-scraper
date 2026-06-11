@@ -1,27 +1,44 @@
-# Resume Notes — Twitter / X Profile & Tweets Scraper (PARKED)
+# Resume Notes - Twitter / X Profile & Tweets Scraper
 
 ## Status
-Build is fixed, compiles, runs, and is **safe** (guard retires session + never charges on rate-limit/empty). Pricing configured: `profile-scraped` @ $4.00/1000. SEO-optimized listing. On GitHub and pushed to Apify. **Not earning** — rate-limited.
 
-## What works
-- Compiles clean; `actor.json` pricing valid (PAY_PER_EVENT `profile-scraped`) + SEO title/description.
-- Implemented the **no-login syndication approach**: `syndication.twitter.com/srv/timeline-profile/screen-name/{user}` → parse `__NEXT_DATA__` JSON → full profile (followers, following, tweets, bio, verified, joined, location) + tweets (likes/RT/replies/views/media/hashtags/mentions). Parser is complete in `src/routes.ts`.
+Fixed by adding a reliable official API path and keeping the old no-login endpoint as a guarded fallback:
 
-## What's blocking (where it stopped)
-- The syndication endpoint returns **429 (rate limited)** — on a bare home IP AND on Apify residential with rotation + session retire. X rate-limits this endpoint aggressively per request, not just per IP.
+- `dataSource: "auto"` uses X API mode when `xApiBearerToken` is supplied.
+- `dataSource: "api"` requires `xApiBearerToken`.
+- `dataSource: "syndication"` keeps the previous no-login `syndication.twitter.com` parser.
+- The actor never saves or charges for blocked, empty, or rate-limited syndication responses.
 
-## What it needs next (turnkey resume)
-1. **Guest-token GraphQL flow** (most capable, what robust X scrapers use):
-   - POST `https://api.twitter.com/1.1/guest/activate.json` with the public `Authorization: Bearer <public web bearer>` → `guest_token`.
-   - GET GraphQL `UserByScreenName` (bearer + `x-guest-token`) → full user (rest_id, legacy.followers_count, etc.).
-   - GET GraphQL `UserTweets` with userId → tweets.
-   - NOTE: query IDs + `features`/`variables` params rotate — needs occasional maintenance.
-2. OR provide **auth cookies** (`auth_token`, `ct0`) via input and call the GraphQL endpoints as a logged-in session (most reliable, but needs an account).
-3. OR try the `cdn.syndication.twimg.com/timeline/profile?screen_name=&token=` variant with the computed `token`, paired with heavier residential rotation + delays.
+## Why this was needed
 
-## Test command
-```bash
-apify push
-# then run: { "usernames": ["elonmusk"], "maxTweetsPerProfile": 20, "proxyConfiguration": { "useApifyProxy": true, "apifyProxyGroups": ["RESIDENTIAL"] } }
+The previous no-login syndication-only actor was structurally sound, but X returned 429 rate limits even with residential proxy rotation. That endpoint is not reliable enough to monetize on its own.
+
+## What works now
+
+- Official X API v2 bearer token input: `xApiBearerToken` (secret)
+- API user lookup by username
+- API recent user tweets with public metrics and media expansions
+- Existing output shape retained
+- Profiles go to the default dataset
+- Tweets go to named dataset `tweets`
+- PAY_PER_EVENT `profile-scraped` @ `$0.004`
+- Charge only after profile/tweet data has been pushed
+
+## Remaining risk
+
+- X API rate limits and available fields depend on the user's X API plan.
+- Syndication mode can still hit 429 and should be treated as best-effort.
+- API mode may not expose profile banner or likes count; those fields are set to `null` when unavailable.
+
+## Recommended Apify test
+
+```json
+{
+  "dataSource": "api",
+  "xApiBearerToken": "YOUR_TOKEN",
+  "usernames": ["openai"],
+  "maxTweetsPerProfile": 5
+}
 ```
-Watch for: no 429, and `Done: @elonmusk — profile + N tweets`.
+
+Expected: one profile record in the default dataset, up to five tweet records in `tweets`, and one `profile-scraped` charge event.

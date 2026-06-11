@@ -1,7 +1,7 @@
 {
   "name": "twitter-x-profile-scraper",
   "version": "1.0.0",
-  "description": "Apify Actor that scrapes public Twitter/X profiles and tweets",
+  "description": "Apify Actor that extracts Twitter/X profiles and recent tweets via X API mode with guarded no-login fallback",
   "type": "module",
   "main": "dist/main.js",
   "scripts": {

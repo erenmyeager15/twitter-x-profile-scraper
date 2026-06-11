@@ -1,5 +1,7 @@
 export interface ActorInput {
   usernames: string[];
+  dataSource?: 'auto' | 'api' | 'syndication';
+  xApiBearerToken?: string;
   maxTweetsPerProfile?: number;
   includeReplies?: boolean;
   includeRetweets?: boolean;

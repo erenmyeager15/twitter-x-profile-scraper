@@ -1,6 +1,6 @@
 {
-  "title": "Twitter/X Profile Scraper — Extract Tweets & Analytics",
-  "description": "Scrape public Twitter/X profiles and tweets with full analytics data. Extract profile information, follower counts, tweet content, engagement metrics, and media URLs. Supports batch processing of multiple accounts.",
+  "title": "Twitter/X Profile Scraper - Extract Tweets & Analytics",
+  "description": "Scrape Twitter/X profiles and recent tweets. Use an official X API bearer token for reliable runs; no-login syndication mode remains available as a guarded fallback.",
   "type": "object",
   "schemaVersion": 1,
   "required": ["usernames"],
@@ -14,34 +14,52 @@
       "prefill": ["elonmusk"],
       "sectionCaption": "Target Accounts"
     },
+    "dataSource": {
+      "title": "Data Source",
+      "type": "string",
+      "description": "Auto uses X API mode when a bearer token is supplied, otherwise no-login syndication mode.",
+      "editor": "select",
+      "default": "auto",
+      "enum": ["auto", "api", "syndication"],
+      "enumTitles": ["Auto", "X API", "No-login syndication"],
+      "sectionCaption": "Scraping Settings"
+    },
+    "xApiBearerToken": {
+      "title": "X API Bearer Token",
+      "type": "string",
+      "description": "Optional official X API v2 bearer token. Recommended because no-login syndication is heavily rate-limited.",
+      "editor": "textfield",
+      "isSecret": true,
+      "sectionCaption": "Scraping Settings"
+    },
     "maxTweetsPerProfile": {
       "title": "Max Tweets Per Profile",
       "type": "integer",
-      "description": "Maximum number of tweets to scrape per profile. Higher values take longer.",
+      "description": "Maximum number of tweets to scrape per profile. X API mode fetches up to 100 per API page.",
       "minimum": 1,
       "maximum": 3200,
-      "default": 100,
+      "default": 10,
       "editor": "number",
       "sectionCaption": "Scraping Settings"
     },
     "includeReplies": {
       "title": "Include Replies",
       "type": "boolean",
-      "description": "Include reply tweets in the results. Replies are tweets posted in response to other tweets.",
+      "description": "Include reply tweets in the results.",
       "default": false,
       "editor": "checkbox"
     },
     "includeRetweets": {
       "title": "Include Retweets",
       "type": "boolean",
-      "description": "Include retweets in the results. Retweets are shares of other users' tweets.",
+      "description": "Include retweets in the results.",
       "default": false,
       "editor": "checkbox"
     },
     "proxyConfiguration": {
       "title": "Proxy Configuration",
       "type": "object",
-      "description": "Proxy settings for scraping. Residential proxies are strongly recommended for Twitter/X scraping to avoid rate limits.",
+      "description": "Proxy settings for no-login syndication mode. X API mode does not need a proxy.",
       "editor": "proxy",
       "default": {
         "useApifyProxy": true,

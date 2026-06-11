@@ -1,8 +1,8 @@
 {
   "actorSpecification": 1,
   "name": "twitter-x-profile-scraper",
-  "title": "Twitter / X Profile & Tweets Scraper - No Login",
-  "description": "Scrape public Twitter (X) profiles and tweets without login or API keys. Get followers, following, bio, verified status, join date, location, and recent tweets with likes, retweets, replies, views, media, hashtags, and mentions. Fast, bulk, pay per profile.",
+  "title": "Twitter / X Profile & Tweets Scraper",
+  "description": "Scrape Twitter/X profiles and recent tweets. Uses official X API mode when a bearer token is supplied, with no-login syndication as a guarded fallback.",
   "version": "1.0",
   "dockerfile": "Dockerfile",
   "input": "../INPUT_SCHEMA.json",
@@ -24,6 +24,7 @@
   "minMemoryMbytes": 2048,
   "maxMemoryMbytes": 8192,
   "defaultRunOptions": {
+    "build": "latest",
     "memoryMbytes": 4096,
     "timeoutSecs": 43200
   },

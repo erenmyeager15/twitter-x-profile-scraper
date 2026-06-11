@@ -1,58 +1,107 @@
-# Twitter/X Profile Scraper — Extract Tweets & Analytics
+# Twitter/X Profile & Tweets Scraper
 
-Extract public Twitter/X profile data and tweets with full engagement analytics. Scrape profile information, follower counts, tweet content, likes, retweets, views, media URLs, and more.
+Extract Twitter/X profile data and recent tweets. Use an official X API v2 bearer token for reliable runs, or use the guarded no-login syndication fallback for small best-effort public profile checks.
 
-## Features
+## What This Actor Extracts
 
-- **Profile Data Extraction**: Username, display name, bio, follower/following counts, join date, location, website, profile/banner images, verification status
-- **Tweet Scraping**: Full tweet text, engagement metrics (likes, retweets, replies, views, quotes), media URLs, hashtags, mentions, links
-- **Batch Processing**: Scrape multiple Twitter/X accounts in a single run
-- **Deduplication**: Automatic tweet deduplication by tweet ID
-- **Anti-Bot Protection**: Residential proxy rotation, session pooling, random delays, retry logic
-- **Public Data Only**: No login required, scrapes only publicly available information
+- Profile data: username, display name, bio, follower/following counts, tweet count, join date, location, website, profile image, verification status
+- Tweet data: text, URL, date, likes, retweets, replies, quotes, views when available, media URLs, hashtags, mentions, links, language, reply/quote IDs
+- Separate datasets: profiles in the default dataset, tweets in the named `tweets` dataset
 
-## Use Cases
+## Data Sources
 
-1. **Brand Monitoring**: Track mentions, sentiment, and engagement across social media
-2. **Influencer Research**: Analyze influencer profiles, follower growth, and content performance
-3. **Sentiment Analysis**: Collect tweet data for natural language processing and sentiment analysis
-4. **Competitor Tracking**: Monitor competitor social media activity and engagement metrics
-5. **Social Media Reporting**: Generate comprehensive social media analytics reports
+### X API mode
 
-## Output
+Recommended. Add `xApiBearerToken` and set `dataSource` to `auto` or `api`.
 
-### Profiles Dataset
+API mode uses official X API v2 endpoints:
+
+- User lookup by username
+- Recent user tweets with public metrics, media expansions, hashtags, mentions, and links
+
+This is the reliable path because the old no-login syndication endpoint is heavily rate-limited by X.
+
+### No-login syndication mode
+
+Fallback only. Set `dataSource` to `syndication`.
+
+The actor keeps the old `syndication.twitter.com` parser, but X often returns 429 for that endpoint. The run is guarded: if the endpoint is rate-limited, empty, or blocked, the actor retries/rotates session and does not save or charge invalid data.
+
+## Input
+
+| Parameter | Type | Description | Default |
+|-----------|------|-------------|---------|
+| `usernames` | `string[]` | Twitter/X usernames or profile URLs | `["elonmusk"]` |
+| `dataSource` | `string` | `auto`, `api`, or `syndication` | `auto` |
+| `xApiBearerToken` | `string` | Optional official X API v2 bearer token. Secret input. | empty |
+| `maxTweetsPerProfile` | `integer` | Max tweets per profile | `10` |
+| `includeReplies` | `boolean` | Include replies | `false` |
+| `includeRetweets` | `boolean` | Include retweets | `false` |
+| `proxyConfiguration` | `object` | Proxy settings for syndication mode | Apify Residential |
+
+## Example Inputs
+
+### API mode
 
 ```json
 {
-  "username": "elonmusk",
-  "displayName": "Elon Musk",
-  "bio": "CEO of Tesla & SpaceX",
-  "followersCount": 150000000,
-  "followingCount": 800,
-  "tweetsCount": 35000,
-  "likesCount": 50000,
-  "joinedDate": "June 2009",
-  "location": "Austin, TX",
-  "websiteUrl": "https://tesla.com",
-  "profileImageUrl": "https://pbs.twimg.com/profile_images/...",
-  "bannerImageUrl": "https://pbs.twimg.com/profile_banners/...",
-  "verifiedBadge": true,
-  "blueCheckmark": true,
-  "isBusinessAccount": false,
-  "profileUrl": "https://x.com/elonmusk",
-  "pinnedTweetId": "1234567890",
-  "scrapedAt": "2026-06-09T12:00:00.000Z"
+  "dataSource": "api",
+  "xApiBearerToken": "YOUR_X_API_BEARER_TOKEN",
+  "usernames": ["openai", "elonmusk"],
+  "maxTweetsPerProfile": 10,
+  "includeReplies": false,
+  "includeRetweets": false
 }
 ```
 
-### Tweets Dataset
+### Syndication fallback
+
+```json
+{
+  "dataSource": "syndication",
+  "usernames": ["elonmusk"],
+  "maxTweetsPerProfile": 10,
+  "proxyConfiguration": {
+    "useApifyProxy": true,
+    "apifyProxyGroups": ["RESIDENTIAL"]
+  }
+}
+```
+
+## Output
+
+### Profile
+
+```json
+{
+  "username": "openai",
+  "displayName": "OpenAI",
+  "bio": "Creating safe AGI that benefits all of humanity.",
+  "followersCount": 10000000,
+  "followingCount": 5,
+  "tweetsCount": 12000,
+  "likesCount": null,
+  "joinedDate": "2015-12-11T00:00:00.000Z",
+  "location": "San Francisco, CA",
+  "websiteUrl": "https://openai.com",
+  "profileImageUrl": "https://pbs.twimg.com/profile_images/...",
+  "bannerImageUrl": null,
+  "verifiedBadge": true,
+  "blueCheckmark": true,
+  "isBusinessAccount": true,
+  "profileUrl": "https://x.com/openai",
+  "pinnedTweetId": "1234567890",
+  "scrapedAt": "2026-06-11T10:00:00.000Z"
+}
+```
+
+### Tweet
 
 ```json
 {
   "tweetId": "1234567890",
   "text": "Hello world!",
-  "tweetUrl": "https://x.com/elonmusk/status/1234567890",
+  "tweetUrl": "https://x.com/openai/status/1234567890",
   "postedDate": "2026-06-09T12:00:00.000Z",
   "likesCount": 50000,
   "retweetsCount": 5000,
@@ -64,80 +113,32 @@ Extract public Twitter/X profile data and tweets with full engagement analytics.
   "isReply": false,
   "isRetweet": false,
   "isQuote": false,
-  "hashtags": ["tech", "innovation"],
-  "mentions": ["@tesla", "@spacex"],
-  "links": ["https://tesla.com"],
+  "hashtags": ["AI"],
+  "mentions": ["openai"],
+  "links": ["https://openai.com"],
   "language": "en",
-  "authorUsername": "elonmusk",
+  "authorUsername": "openai",
   "inReplyToTweetId": null,
   "quotedTweetId": null,
-  "scrapedAt": "2026-06-09T12:00:00.000Z"
+  "scrapedAt": "2026-06-11T10:00:00.000Z"
 }
 ```
 
 ## Pricing
 
-| Event | Price | Description |
-|-------|-------|-------------|
-| Profile Scraped | $0.004 | Charged once per profile after all tweets are pushed |
+| Event | Price |
+|-------|-------|
+| Profile scraped | `$0.004` |
 
-**Example**: Scraping 10 profiles with 100 tweets each = $0.04 (10 × $0.004)
+The actor charges once per successfully saved profile, after profile data and available tweets are pushed. Blocked, rate-limited, empty, or failed profiles are not charged.
 
-## Input Configuration
+## Notes
 
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `usernames` | string[] | required | Twitter/X usernames or profile URLs |
-| `maxTweetsPerProfile` | integer | 100 | Max tweets to scrape per profile (1-3200) |
-| `includeReplies` | boolean | false | Include reply tweets |
-| `includeRetweets` | boolean | false | Include retweet posts |
-| `proxyConfiguration` | object | useApifyProxy | Proxy settings (residential recommended) |
-
-## Running the Actor
-
-### Via Apify Console
-
-1. Go to the Actor page on Apify Store
-2. Click "Start"
-3. Enter usernames and configure settings
-4. Click "Start" to run
-
-### Via API
-
-```javascript
-const { ApifyClient } = require('apify-client');
-
-const client = new ApifyClient({ token: 'YOUR_API_TOKEN' });
-
-const run = await client.actor('your-actor-id').call({
-  usernames: ['elonmusk', 'naval'],
-  maxTweetsPerProfile: 50,
-  includeReplies: false,
-  includeRetweets: false,
-});
-
-console.log('Run finished:', run.status);
-```
-
-## Ethical Considerations
-
-This Actor scrapes **publicly available data only**. It does not:
-
-- Access private accounts or protected tweets
-- Bypass authentication or login requirements
-- Collect personal data beyond what users publicly share
-- Violate Twitter/X Terms of Service
-
-Users are responsible for complying with all applicable laws and regulations when using scraped data. This includes GDPR, CCPA, and other privacy regulations where applicable.
-
-## Technical Details
-
-- **Runtime**: Node.js 20
-- **Browser**: Playwright with Chrome
-- **Anti-Bot**: Residential proxy rotation, session pooling (max 10 uses), random delays (2-6s), 3 retries
-- **Memory**: 4096 MB
-- **Timeout**: 43200 seconds (12 hours)
+- Use X API mode for production runs.
+- API field availability and limits depend on the user's X API plan.
+- Syndication mode is no-login but rate-limited aggressively by X.
+- The actor only collects publicly available profile/tweet data returned by the selected data source.
 
 ## License
 
-Apache 2.0
+Apache-2.0
