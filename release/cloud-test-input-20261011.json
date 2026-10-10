@@ -1,0 +1,13 @@
+{
+  "usernames": ["openai"],
+  "maxTweetsPerProfile": 5,
+  "includeReplies": false,
+  "includeRetweets": false,
+  "trackGrowth": true,
+  "monitorName": "cloud-qa-20261011-50a0a1e",
+  "observationHistoryLimit": 5,
+  "dataSource": "public-page",
+  "proxyConfiguration": {
+    "useApifyProxy": false
+  }
+}

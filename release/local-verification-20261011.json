@@ -2,8 +2,8 @@
   "actor": "fascinating_lentil/twitter-x-profile-scraper",
   "candidateVersion": "1.1",
   "verifiedAt": "2026-10-11",
-  "status": "local-gates-passed-cloud-gate-pending",
-  "publicState": "private",
+  "status": "local-gates-passed-see-cloud-verification-receipt",
+  "publicState": "public",
   "pricing": {
     "event": "profile-scraped",
     "priceUsd": 0.004,
@@ -43,8 +43,9 @@
   },
   "cloudGate": {
     "required": true,
-    "approved": false,
-    "runs": 0,
-    "published": false
+    "approved": true,
+    "runs": 2,
+    "published": true,
+    "receipt": "release/cloud-verification-20261011.json"
   }
 }

@@ -2,14 +2,14 @@
 
 ## Current status
 
-The 1.1 candidate is locally complete and should remain private until bounded cloud verification passes.
+Version 1.1.1 is verified and public on Apify. Exact build `Y4ecGe5SzGUuPw8XK` is tagged `latest` and `staging`; GitHub source commit is `50a0a1e`.
 
 - Direct public X profile page is the default; no login, API key, browser, or proxy is required.
 - Official X API v2 remains an optional bring-your-own-token data source.
 - Direct HTTP is always attempted before one optional user-configured proxy retry.
 - Public-page mode returns exact profile totals plus up to 20 recent posts.
 - Price remains `$0.004` for each successfully saved profile, including available posts and monitoring fields.
-- Candidate defaults: 256 MB, no proxy, 300-second timeout.
+- Public defaults: 256 MB, no proxy, 300-second timeout.
 
 ## New product value
 
@@ -34,13 +34,15 @@ The 1.1 candidate is locally complete and should remain private until bounded cl
 - Live Elon Musk direct-page checks: success without proxy
 - Measured local Node peak: about 121.1 MiB, leaving about 134.9 MiB at 256 MB
 
-## Required cloud gate before publication
+## Cloud and publication gates
 
-1. Create one staging build from the GitHub-pushed candidate.
-2. Run one default OpenAI profile at 256 MB, no proxy.
-3. Run the exact same input again to verify persistent comparison state.
-4. Require complete output, five recent posts, working JSON/CSV links, zero state-write failures, and peak memory below 230.4 MiB.
-5. Calculate recurring margin from the reported platform cost after Apify's 20% share; require at least 25%.
-6. Publish the exact verified build only if every gate passes. Keep the Actor private otherwise.
+- Build `Y4ecGe5SzGUuPw8XK` / `1.1.1` succeeded and is the exact published build.
+- Matching OpenAI checks `zWCVohcgcjbIkOCC8` and `YdGhLQWAdCYPL9527` both succeeded without a proxy.
+- Runs finished in about 3.6 and 2.86 seconds and peaked at about 54.51 and 52.98 MiB.
+- Both returned one complete profile and five recent posts. The repeat recorded observation count two as unchanged.
+- Dataset, `OUTPUT`, JSON report and formula-safe CSV passed; state-write failures were zero.
+- Platform usage was user-billed. Estimated creator share after Apify's 20% is about 80%; the conservative stress test is about 77.42-77.72%.
+- Build, platform usage and conservatively added listed event fees total about $0.01455, below the $0.06 soft target.
+- Store page returned HTTP 200: https://apify.com/fascinating_lentil/twitter-x-profile-scraper
 
-No cloud build, paid verification, or Apify publication is included in the local work recorded here.
+Full receipt: `release/cloud-verification-20261011.json`. Results are owner-test evidence, not guaranteed customer demand or income.

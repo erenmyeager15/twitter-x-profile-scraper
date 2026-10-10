@@ -1,0 +1,20 @@
+{
+  "title": "X (Twitter) Profile Scraper & Growth Monitor",
+  "description": "Scrape public X profiles and recent posts, then monitor follower growth, posting pace, engagement and profile changes. Includes persistent history plus JSON and CSV reports. No login or API key required.",
+  "seoTitle": "X Profile Scraper & Growth Monitor",
+  "seoDescription": "Scrape public X profiles and posts. Monitor follower growth, engagement, posting pace and profile changes with JSON and CSV reports—no login required.",
+  "categories": [
+    "SOCIAL_MEDIA",
+    "MARKETING"
+  ],
+  "defaultRunOptions": {
+    "build": "latest",
+    "memoryMbytes": 256,
+    "timeoutSecs": 300
+  },
+  "exampleRunInput": {
+    "body": "{\"usernames\":[\"openai\"],\"maxTweetsPerProfile\":5,\"includeReplies\":false,\"includeRetweets\":false,\"trackGrowth\":true,\"monitorName\":\"default\",\"proxyConfiguration\":{\"useApifyProxy\":false}}",
+    "contentType": "application/json; charset=utf-8"
+  },
+  "isPublic": true
+}

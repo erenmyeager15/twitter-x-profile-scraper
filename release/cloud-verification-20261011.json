@@ -1,0 +1,77 @@
+{
+  "actor": "fascinating_lentil/twitter-x-profile-scraper",
+  "actorId": "sKZNYaneliCJDMMsu",
+  "publishedAt": "2026-10-11",
+  "status": "published-all-gates-passed",
+  "public": true,
+  "sourceCommit": "50a0a1eda37b6762fd2b59d701ae3dd9507a5e4a",
+  "build": {
+    "id": "Y4ecGe5SzGUuPw8XK",
+    "number": "1.1.1",
+    "tags": ["latest", "staging"],
+    "buildCostUsd": 0.006356
+  },
+  "publicDefaults": {
+    "memoryMbytes": 256,
+    "timeoutSecs": 300,
+    "proxyEnabled": false
+  },
+  "pricing": {
+    "event": "profile-scraped",
+    "priceUsd": 0.004,
+    "apifyMarginPercentage": 20,
+    "unchanged": true
+  },
+  "checks": [
+    {
+      "runId": "zWCVohcgcjbIkOCC8",
+      "status": "SUCCEEDED",
+      "durationSeconds": 3.6,
+      "peakMemoryMiB": 54.51,
+      "averageMemoryMiB": 32.06,
+      "savedProfiles": 1,
+      "recentPosts": 5,
+      "trackingStatus": "baseline",
+      "observationCount": 1,
+      "stateWriteFailures": 0,
+      "platformUsageUsd": 0.00010319834798574448,
+      "platformUsageBillingModel": "USER",
+      "proxyUsed": false,
+      "outputsPassed": ["dataset", "OUTPUT", "MONITORING-REPORT", "MONITORING-REPORT.csv"]
+    },
+    {
+      "runId": "YdGhLQWAdCYPL9527",
+      "status": "SUCCEEDED",
+      "durationSeconds": 2.86,
+      "peakMemoryMiB": 52.98,
+      "averageMemoryMiB": 46.3,
+      "savedProfiles": 1,
+      "recentPosts": 5,
+      "trackingStatus": "unchanged",
+      "observationCount": 2,
+      "stateWriteFailures": 0,
+      "platformUsageUsd": 0.000091275295747651,
+      "platformUsageBillingModel": "USER",
+      "proxyUsed": false,
+      "outputsPassed": ["dataset", "OUTPUT", "MONITORING-REPORT", "MONITORING-REPORT.csv"]
+    }
+  ],
+  "profitability": {
+    "creatorRevenuePerProfileAfterApifyShareUsd": 0.0032,
+    "estimatedCreatorShareMarginPercent": 80,
+    "conservativeMarginsAfterAlsoSubtractingUserBilledUsagePercent": [77.42, 77.72],
+    "minimumRequiredPercent": 25,
+    "passed": true,
+    "note": "Platform usage was billed to the user. Conservative margins additionally subtract that user-billed usage as a stress test."
+  },
+  "approvedCheckSpend": {
+    "softTargetUsd": 0.06,
+    "buildAndPlatformUsageUsd": 0.006550473643733395,
+    "listedEventFeesAddedConservativelyUsd": 0.008,
+    "totalConservativeUsd": 0.014550473643733395,
+    "withinTarget": true
+  },
+  "storePage": "https://apify.com/fascinating_lentil/twitter-x-profile-scraper",
+  "storePageHttpStatus": 200,
+  "evidenceDisclaimer": "Owner-test evidence; not a guarantee of customer demand, future source availability, or income."
+}
