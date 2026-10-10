@@ -1,149 +1,180 @@
-# Twitter/X Profile & Tweets Scraper
+# X (Twitter) Profile Scraper & Growth Monitor
 
-Extract Twitter/X profile data and recent tweets. Use an official X API v2 bearer token for reliable runs, or use the guarded no-login syndication fallback for small best-effort public profile checks.
+Turn public X profiles into structured creator, brand, and competitor intelligence. Extract exact profile totals, recent posts, engagement metrics, media, verification details, and website links—then schedule the same watchlist to measure follower growth, posting pace, and profile changes.
 
-## What This Actor Extracts
+**No X login or API key is required for the default public-page mode.** An official X API bearer token remains available as an optional bring-your-own-token path.
 
-- Profile data: username, display name, bio, follower/following counts, tweet count, join date, location, website, profile image, verification status
-- Tweet data: text, URL, date, likes, retweets, replies, quotes, views when available, media URLs, hashtags, mentions, links, language, reply/quote IDs
-- Separate datasets: profiles in the default dataset, tweets in the named `tweets` dataset
+## Why use this Actor?
 
-## Data Sources
+Most profile exports are isolated snapshots. This Actor also makes repeat runs useful:
 
-### X API mode
+- Track follower growth, follower change, and followers gained per day.
+- Track new posts and estimated posting pace per week.
+- Detect bio, display name, website, and verification changes.
+- Flag follower spikes, drops, new posts, and profile updates.
+- Keep separate histories for different client or competitor watchlists.
+- Export a spreadsheet-ready monitoring report in CSV and JSON.
+- Receive profile data and recent posts together in one automation-friendly row.
 
-Recommended. Add `xApiBearerToken` and set `dataSource` to `auto` or `api`.
+Typical US-market workflows include creator vetting, executive and brand monitoring, influencer research, competitive intelligence, PR watchlists, and social audience tracking.
 
-API mode uses official X API v2 endpoints:
+## What you get
 
-- User lookup by username
-- Recent user tweets with public metrics, media expansions, hashtags, mentions, and links
+### Profile intelligence
 
-This is the reliable path because the old no-login syndication endpoint is heavily rate-limited by X.
+- Username, display name, bio, location, and website
+- Exact follower, following, and total post counts when exposed by X
+- Avatar, banner, profile URL, account privacy, and verification type
+- Pinned post ID when available
+- Collection source and data-quality indicator
 
-### No-login syndication mode
+### Recent post analytics
 
-Fallback only. Set `dataSource` to `syndication`.
+- Post text, URL, timestamp, author, and post ID
+- Likes, reposts, replies, views, and quote count when available
+- Images or video preview URLs
+- Hashtags, mentions, and outbound links
+- Reply, repost, quote, media, and pinned-post flags
+- Per-profile totals and averages for recent engagement and views
 
-The actor keeps the old `syndication.twitter.com` parser, but X often returns 429 for that endpoint. The run is guarded: if the endpoint is rate-limited, empty, or blocked, the actor retries/rotates session and does not save or charge invalid data.
+### Repeat-run monitoring
 
-## Input
+- `followersDelta` and `followersGrowthPercent`
+- `followersPerDay`
+- `tweetsDelta` and `postsPerWeek`
+- Previous counts, observation count, and first/previous seen timestamps
+- Changed fields and growth signals
+- `baseline`, `updated`, `unchanged`, or `partial` tracking status
 
-| Parameter | Type | Description | Default |
-|-----------|------|-------------|---------|
-| `usernames` | `string[]` | Twitter/X usernames or profile URLs | `["elonmusk"]` |
-| `dataSource` | `string` | `auto`, `api`, or `syndication` | `auto` |
-| `xApiBearerToken` | `string` | Optional official X API v2 bearer token. Secret input. | empty |
-| `maxTweetsPerProfile` | `integer` | Max tweets per profile | `10` |
-| `includeReplies` | `boolean` | Include replies | `false` |
-| `includeRetweets` | `boolean` | Include retweets | `false` |
-| `proxyConfiguration` | `object` | Proxy settings for syndication mode | Apify Residential |
+The first run creates a baseline. Later runs using the same `monitorName` compare against that watchlist's previous complete observation. Rate fields require observations at least one hour apart so short test runs do not create misleading growth rates.
 
-## Example Inputs
-
-### API mode
-
-```json
-{
-  "dataSource": "api",
-  "xApiBearerToken": "YOUR_X_API_BEARER_TOKEN",
-  "usernames": ["openai", "elonmusk"],
-  "maxTweetsPerProfile": 10,
-  "includeReplies": false,
-  "includeRetweets": false
-}
-```
-
-### Syndication fallback
+## Quick start
 
 ```json
 {
-  "dataSource": "syndication",
-  "usernames": ["elonmusk"],
-  "maxTweetsPerProfile": 10,
+  "usernames": ["openai", "nasa", "github"],
+  "maxTweetsPerProfile": 5,
+  "trackGrowth": true,
+  "monitorName": "US technology watchlist",
   "proxyConfiguration": {
-    "useApifyProxy": true,
-    "apifyProxyGroups": ["RESIDENTIAL"]
+    "useApifyProxy": false
   }
 }
 ```
 
-## Output
+For recurring intelligence, save this input as an Apify task and schedule it daily or weekly. Keep the same usernames and `monitorName` so comparisons remain continuous.
 
-### Profile
+## Input
+
+| Field | Purpose | Default |
+|---|---|---|
+| `usernames` | Up to 25 X usernames or x.com/twitter.com profile URLs | `openai` |
+| `maxTweetsPerProfile` | Recent posts nested in each profile; set 0 for metrics only | `5` |
+| `includeReplies` | Include recent replies | `false` |
+| `includeRetweets` | Include recent reposts | `false` |
+| `trackGrowth` | Persist bounded observations and calculate changes | `true` |
+| `monitorName` | Stable name separating one watchlist from another | `default` |
+| `observationHistoryLimit` | Observations retained per profile | `30` |
+| `dataSource` | `auto`, `public-page`, or `api` | `auto` |
+| `xApiBearerToken` | Optional secret official X API bearer token | empty |
+| `proxyConfiguration` | Optional one-retry fallback after direct public access fails | disabled |
+
+Public-page mode returns up to 20 recent posts. Official API mode supports up to 100, subject to the permissions and limits of your X developer plan.
+
+## Output example
 
 ```json
 {
-  "username": "openai",
+  "username": "OpenAI",
   "displayName": "OpenAI",
-  "bio": "Creating safe AGI that benefits all of humanity.",
-  "followersCount": 10000000,
-  "followingCount": 5,
-  "tweetsCount": 12000,
-  "likesCount": null,
-  "joinedDate": "2015-12-11T00:00:00.000Z",
-  "location": "San Francisco, CA",
+  "followersCount": 5424044,
+  "followingCount": 4,
+  "tweetsCount": 2179,
   "websiteUrl": "https://openai.com",
-  "profileImageUrl": "https://pbs.twimg.com/profile_images/...",
-  "bannerImageUrl": null,
-  "verifiedBadge": true,
-  "blueCheckmark": true,
-  "isBusinessAccount": true,
-  "profileUrl": "https://x.com/openai",
-  "pinnedTweetId": "1234567890",
-  "scrapedAt": "2026-06-11T10:00:00.000Z"
+  "verificationType": "Business",
+  "profileUrl": "https://x.com/OpenAI",
+  "dataSource": "public-page",
+  "dataQuality": "detailed",
+  "trackingStatus": "updated",
+  "previousFollowersCount": 5419000,
+  "followersDelta": 5044,
+  "followersGrowthPercent": 0.0931,
+  "followersPerDay": 720.57,
+  "tweetsDelta": 4,
+  "postsPerWeek": 4,
+  "growthSignals": ["followers_growing", "new_posts"],
+  "recentPostSummary": {
+    "postsReturned": 5,
+    "averageLikes": 15600,
+    "averageViews": 7320000,
+    "postsWithMedia": 3
+  },
+  "recentTweets": [
+    {
+      "tweetId": "2107894997538525580",
+      "tweetUrl": "https://x.com/OpenAI/status/2107894997538525580",
+      "text": "Example post text",
+      "postedDate": "2026-10-07T18:05:04.000Z",
+      "likesCount": 23000,
+      "retweetsCount": 1800,
+      "repliesCount": 1100,
+      "viewsCount": 5900000,
+      "hasMedia": true,
+      "isPinned": true
+    }
+  ],
+  "scrapedAt": "2026-10-11T12:00:00.000Z"
 }
 ```
 
-### Tweet
+Example values illustrate the schema and can change at the source.
 
-```json
-{
-  "tweetId": "1234567890",
-  "text": "Hello world!",
-  "tweetUrl": "https://x.com/openai/status/1234567890",
-  "postedDate": "2026-06-09T12:00:00.000Z",
-  "likesCount": 50000,
-  "retweetsCount": 5000,
-  "repliesCount": 1000,
-  "viewsCount": 5000000,
-  "quoteTweetsCount": 500,
-  "hasMedia": true,
-  "mediaUrls": ["https://pbs.twimg.com/media/..."],
-  "isReply": false,
-  "isRetweet": false,
-  "isQuote": false,
-  "hashtags": ["AI"],
-  "mentions": ["openai"],
-  "links": ["https://openai.com"],
-  "language": "en",
-  "authorUsername": "openai",
-  "inReplyToTweetId": null,
-  "quotedTweetId": null,
-  "scrapedAt": "2026-06-11T10:00:00.000Z"
-}
-```
+## Reports and integrations
+
+Every successful run provides:
+
+- **Default dataset:** profile records with nested recent posts and monitoring fields
+- **`MONITORING-REPORT`:** JSON coverage, status, signal totals, and comparison rows
+- **`MONITORING-REPORT.csv`:** spreadsheet-ready growth report with formula-injection protection
+- **`OUTPUT`:** saved and failed target counts with concise failure reasons
+
+Use the dataset API with Google Sheets, Airtable, Make, Zapier, n8n, BI tools, or your own data pipeline.
 
 ## Pricing
 
-| Event | Price |
-|-------|-------|
-| Profile scraped | `$0.004` |
+The Actor charges **$0.004 per successfully saved profile**, including its available recent posts and monitoring comparison.
 
-The actor charges once per successfully saved profile, after profile data and available tweets are pushed. Blocked, rate-limited, empty, or failed profiles are not charged.
+| Successful profiles | Event charge |
+|---:|---:|
+| 1 | $0.004 |
+| 10 | $0.04 |
+| 25 | $0.10 |
 
-## Notes
+Failed or empty profiles are not intentionally charged. Always check the live Pricing tab for the current terms before a production run.
 
-- Use X API mode for production runs.
-- API field availability and limits depend on the user's X API plan.
-- Syndication mode is no-login but rate-limited aggressively by X.
-- The actor only collects publicly available profile/tweet data returned by the selected data source.
+## Reliability and cost controls
 
-## Responsible Use
+- Uses direct HTTP rather than a browser for low memory and fast startup.
+- Rejects mismatched, incomplete, or oversized source pages instead of saving misleading rows.
+- Direct access is attempted first; Residential traffic is never enabled silently.
+- A user-configured proxy receives only one retry after direct access fails.
+- Monitoring history is bounded from 2 to 90 observations per profile.
+- A profile is charged only when its dataset record is successfully saved.
+- If every target fails, the run fails visibly rather than reporting false success.
 
-This Actor is intended for lawful collection of publicly available information only. Users are responsible for ensuring their use complies with the source website's terms, robots.txt, applicable privacy laws, including India's DPDP Act, and all local regulations.
+Public websites can change. The Actor reports `dataQuality` so downstream workflows can distinguish complete post analytics from profile-only results.
 
-Do not use this Actor to collect, store, sell, or misuse personal data without a lawful basis. The Actor author is not responsible for misuse by end users.
+## Official X API mode
+
+Choose `dataSource: "api"` and provide `xApiBearerToken` if your workflow requires the official API. The token is treated as a secret and is never written to results or logs. API availability, fields, and request limits depend on your X developer plan.
+
+## Responsible use
+
+Use this Actor only for lawful collection of publicly available information. Respect X's terms, applicable privacy and data-protection laws, and the rights of account owners. Do not use the output for harassment, discrimination, surveillance, or unlawful profiling.
+
+## Support
+
+When reporting an issue, include the Apify run ID, input with secrets removed, affected public usernames, and the approximate run time. Never send API tokens in support messages.
 
 ## License
 

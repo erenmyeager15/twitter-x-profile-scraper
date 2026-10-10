@@ -1,71 +1,94 @@
 {
-  "title": "Twitter/X Profile Scraper - Extract Tweets & Analytics",
-  "description": "Scrape Twitter/X profiles and recent tweets. Use an official X API bearer token for reliable runs; no-login syndication mode remains available as a guarded fallback.",
+  "title": "X (Twitter) Profile Scraper & Growth Monitor",
+  "description": "Extract public X profiles and recent posts, then track follower, posting, verification, and profile changes across scheduled runs. No X login or API key required for public-page mode.",
   "type": "object",
   "schemaVersion": 1,
   "required": ["usernames"],
   "properties": {
     "usernames": {
-      "title": "Twitter/X Usernames or Profile URLs",
+      "title": "X usernames or profile URLs",
+      "description": "Up to 25 public X accounts. Enter usernames such as openai or full x.com/twitter.com profile URLs. Duplicates are removed.",
       "type": "array",
-      "description": "List of Twitter/X usernames (e.g. 'elonmusk') or full profile URLs (e.g. 'https://x.com/elonmusk'). One per line.",
       "editor": "stringList",
-      "default": ["elonmusk"],
-      "prefill": ["elonmusk"],
-      "sectionCaption": "Target Accounts"
-    },
-    "dataSource": {
-      "title": "Data Source",
-      "type": "string",
-      "description": "Auto uses X API mode when a bearer token is supplied, otherwise no-login syndication mode.",
-      "editor": "select",
-      "default": "auto",
-      "enum": ["auto", "api", "syndication"],
-      "enumTitles": ["Auto", "X API", "No-login syndication"],
-      "sectionCaption": "Scraping Settings"
-    },
-    "xApiBearerToken": {
-      "title": "X API Bearer Token",
-      "type": "string",
-      "description": "Optional official X API v2 bearer token. Recommended because no-login syndication is heavily rate-limited.",
-      "editor": "textfield",
-      "isSecret": true,
-      "sectionCaption": "Scraping Settings"
+      "prefill": ["openai"],
+      "default": ["openai"],
+      "minItems": 1,
+      "maxItems": 25,
+      "sectionCaption": "Profiles"
     },
     "maxTweetsPerProfile": {
-      "title": "Max Tweets Per Profile",
+      "title": "Recent posts per profile",
+      "description": "Recent original posts to include inside each profile row. Public-page mode supports up to 20; official API mode supports up to 100. Set 0 for profile metrics only.",
       "type": "integer",
-      "description": "Maximum number of tweets to scrape per profile. X API mode fetches up to 100 per API page.",
-      "minimum": 1,
-      "maximum": 3200,
-      "default": 10,
       "editor": "number",
-      "sectionCaption": "Scraping Settings"
+      "default": 5,
+      "minimum": 0,
+      "maximum": 100,
+      "sectionCaption": "Posts and analytics"
     },
     "includeReplies": {
-      "title": "Include Replies",
+      "title": "Include replies",
+      "description": "Include recent posts identified as replies.",
       "type": "boolean",
-      "description": "Include reply tweets in the results.",
-      "default": false,
-      "editor": "checkbox"
+      "editor": "checkbox",
+      "default": false
     },
     "includeRetweets": {
-      "title": "Include Retweets",
+      "title": "Include reposts",
+      "description": "Include recent posts identified as reposts.",
       "type": "boolean",
-      "description": "Include retweets in the results.",
-      "default": false,
-      "editor": "checkbox"
+      "editor": "checkbox",
+      "default": false
+    },
+    "trackGrowth": {
+      "title": "Track growth and changes",
+      "description": "Compare this run with the previous matching monitor run. Adds follower growth, posting pace, changed fields, and actionable signals.",
+      "type": "boolean",
+      "editor": "checkbox",
+      "default": true,
+      "sectionCaption": "Scheduled monitoring"
+    },
+    "monitorName": {
+      "title": "Monitor name",
+      "description": "Stable name for this watchlist, for example US AI competitors. Use the same name on scheduled runs to preserve its comparison history.",
+      "type": "string",
+      "editor": "textfield",
+      "default": "default"
+    },
+    "observationHistoryLimit": {
+      "title": "Saved observations per profile",
+      "description": "Number of recent observations retained for each profile in this monitor. History is bounded to control storage.",
+      "type": "integer",
+      "editor": "number",
+      "default": 30,
+      "minimum": 2,
+      "maximum": 90
+    },
+    "dataSource": {
+      "title": "Data source",
+      "description": "Auto uses your official X API token when supplied; otherwise it reads the public profile page without login. Choose API to require official API data.",
+      "type": "string",
+      "editor": "select",
+      "default": "auto",
+      "enum": ["auto", "public-page", "api"],
+      "enumTitles": ["Auto — public page unless API token is supplied", "Public page — no login or API key", "Official X API — bring your own token"],
+      "sectionCaption": "Advanced access"
+    },
+    "xApiBearerToken": {
+      "title": "Official X API bearer token",
+      "description": "Optional secret token from your X developer account. It is never saved in results or logs.",
+      "type": "string",
+      "editor": "textfield",
+      "isSecret": true
     },
     "proxyConfiguration": {
-      "title": "Proxy Configuration",
+      "title": "Proxy configuration",
+      "description": "Optional fallback for public-page requests. Direct access is tried first to control cost; a configured proxy is used only for one retry after direct access fails.",
       "type": "object",
-      "description": "Proxy settings for no-login syndication mode. X API mode does not need a proxy.",
       "editor": "proxy",
       "default": {
-        "useApifyProxy": true,
-        "apifyProxyGroups": ["RESIDENTIAL"]
-      },
-      "sectionCaption": "Proxy Settings"
+        "useApifyProxy": false
+      }
     }
   }
 }

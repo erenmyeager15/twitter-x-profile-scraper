@@ -1,10 +1,11 @@
 {
-  "usernames": ["elonmusk"],
-  "maxTweetsPerProfile": 10,
+  "usernames": ["openai"],
+  "maxTweetsPerProfile": 5,
   "includeReplies": false,
   "includeRetweets": false,
+  "trackGrowth": true,
+  "monitorName": "default",
   "proxyConfiguration": {
-    "useApifyProxy": true,
-    "apifyProxyGroups": ["RESIDENTIAL"]
+    "useApifyProxy": false
   }
 }

@@ -1,0 +1,32 @@
+{
+  "actorOutputSchemaVersion": 1,
+  "title": "X Profile Growth Monitor Output",
+  "description": "Public X profile records with nested recent posts, engagement summaries, growth comparisons, and monitoring reports.",
+  "type": "object",
+  "properties": {
+    "profiles": {
+      "type": "string",
+      "title": "Profile records",
+      "description": "Default dataset items containing profile metrics, nested recent posts, engagement summaries, and growth fields.",
+      "template": "{{links.apiDefaultDatasetUrl}}/items"
+    },
+    "monitoringReport": {
+      "type": "string",
+      "title": "Monitoring report (JSON)",
+      "description": "Run-level coverage, tracking states, signals, and profile comparison rows.",
+      "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/MONITORING-REPORT"
+    },
+    "monitoringCsv": {
+      "type": "string",
+      "title": "Monitoring report (CSV)",
+      "description": "Spreadsheet-ready growth and change report with formula-injection protection.",
+      "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/MONITORING-REPORT.csv"
+    },
+    "runSummary": {
+      "type": "string",
+      "title": "Run summary and failures",
+      "description": "Saved/failed profile counts plus concise per-profile failure reasons.",
+      "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/OUTPUT"
+    }
+  }
+}

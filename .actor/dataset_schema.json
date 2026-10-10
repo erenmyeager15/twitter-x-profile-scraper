@@ -1,0 +1,69 @@
+{
+  "actorSpecification": 1,
+  "fields": {
+    "type": "object",
+    "properties": {
+      "username": { "type": "string", "title": "Username", "example": "OpenAI" },
+      "displayName": { "type": "string", "title": "Display name", "example": "OpenAI" },
+      "bio": { "type": "string", "title": "Bio" },
+      "followersCount": { "type": ["integer", "null"], "title": "Followers", "example": 5424044 },
+      "followingCount": { "type": ["integer", "null"], "title": "Following", "example": 4 },
+      "tweetsCount": { "type": ["integer", "null"], "title": "Total posts", "example": 2179 },
+      "location": { "type": ["string", "null"], "title": "Location" },
+      "websiteUrl": { "type": ["string", "null"], "title": "Website" },
+      "verificationType": { "type": ["string", "null"], "title": "Verification type", "example": "Business" },
+      "isPrivate": { "type": "boolean", "title": "Private account", "example": false },
+      "dataSource": { "type": "string", "title": "Data source", "enum": ["public-page", "x-api"] },
+      "dataQuality": { "type": "string", "title": "Data quality", "enum": ["detailed", "profile-only"] },
+      "monitorName": { "type": ["string", "null"], "title": "Monitor" },
+      "trackingStatus": { "type": ["string", "null"], "title": "Tracking status", "enum": ["baseline", "updated", "unchanged", "partial", null] },
+      "observationCount": { "type": ["integer", "null"], "title": "Observations" },
+      "followersDelta": { "type": ["integer", "null"], "title": "Follower change" },
+      "followersGrowthPercent": { "type": ["number", "null"], "title": "Follower growth %" },
+      "followersPerDay": { "type": ["number", "null"], "title": "Followers per day" },
+      "followingDelta": { "type": ["integer", "null"], "title": "Following change" },
+      "tweetsDelta": { "type": ["integer", "null"], "title": "New posts" },
+      "postsPerWeek": { "type": ["number", "null"], "title": "Posts per week" },
+      "growthSignals": { "type": "array", "title": "Growth signals", "items": { "type": "string" } },
+      "recentPostSummary": { "type": "object", "title": "Recent post summary" },
+      "recentTweets": { "type": "array", "title": "Recent posts", "items": { "type": "object" } },
+      "profileUrl": { "type": "string", "title": "X profile URL", "example": "https://x.com/OpenAI" },
+      "scrapedAt": { "type": "string", "title": "Observed at", "example": "2026-10-11T12:00:00.000Z" }
+    }
+  },
+  "views": {
+    "profiles": {
+      "title": "X profiles and growth",
+      "transformation": {
+        "fields": [
+          "username", "displayName", "followersCount", "followersDelta", "followersGrowthPercent",
+          "followersPerDay", "followingCount", "tweetsCount", "tweetsDelta", "postsPerWeek",
+          "trackingStatus", "growthSignals", "recentPostSummary", "recentTweets", "bio", "location",
+          "websiteUrl", "verificationType", "isPrivate", "dataSource", "dataQuality", "profileUrl", "scrapedAt"
+        ]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "username": { "label": "Username", "format": "text" },
+          "displayName": { "label": "Name", "format": "text" },
+          "followersCount": { "label": "Followers", "format": "number" },
+          "followersDelta": { "label": "Follower change", "format": "number" },
+          "followersGrowthPercent": { "label": "Growth %", "format": "number" },
+          "followersPerDay": { "label": "Followers/day", "format": "number" },
+          "followingCount": { "label": "Following", "format": "number" },
+          "tweetsCount": { "label": "Total posts", "format": "number" },
+          "tweetsDelta": { "label": "New posts", "format": "number" },
+          "postsPerWeek": { "label": "Posts/week", "format": "number" },
+          "trackingStatus": { "label": "Tracking", "format": "text" },
+          "growthSignals": { "label": "Signals", "format": "array" },
+          "location": { "label": "Location", "format": "text" },
+          "websiteUrl": { "label": "Website", "format": "link" },
+          "verificationType": { "label": "Verification", "format": "text" },
+          "profileUrl": { "label": "X profile", "format": "link" },
+          "scrapedAt": { "label": "Observed at", "format": "date" }
+        }
+      }
+    }
+  }
+}

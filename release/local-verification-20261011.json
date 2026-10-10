@@ -1,0 +1,50 @@
+{
+  "actor": "fascinating_lentil/twitter-x-profile-scraper",
+  "candidateVersion": "1.1",
+  "verifiedAt": "2026-10-11",
+  "status": "local-gates-passed-cloud-gate-pending",
+  "publicState": "private",
+  "pricing": {
+    "event": "profile-scraped",
+    "priceUsd": 0.004,
+    "unchanged": true
+  },
+  "candidateDefaults": {
+    "memoryMbytes": 256,
+    "timeoutSecs": 300,
+    "proxyEnabled": false
+  },
+  "quality": {
+    "testsPassed": 6,
+    "testsFailed": 0,
+    "typecheckPassed": true,
+    "buildPassed": true,
+    "inputSchemaValid": true,
+    "productionAuditVulnerabilities": 0
+  },
+  "liveLocalChecks": {
+    "openaiBaselinePassed": true,
+    "openaiRepeatPassed": true,
+    "openaiRepeatTrackingStatus": "unchanged",
+    "openaiObservationCount": 2,
+    "openaiRecentPosts": 5,
+    "openaiStateWriteFailures": 0,
+    "elonmuskPassed": true,
+    "elonmuskRecentPosts": 4,
+    "peakWorkingSetMiB": 121.12,
+    "headroomAt256MiB": 134.88,
+    "proxyUsed": false
+  },
+  "marketPosition": {
+    "apiDojoSingleProfileQueryUsd": 0.004,
+    "broadSocialTrackerEntryUsd": 0.005,
+    "broadSocialTrackerHigherTierUsd": 0.0035,
+    "positioning": "Not the cheapest profile export; priced for a combined profile, recent-post, persistent-growth, change-signal, and report workflow."
+  },
+  "cloudGate": {
+    "required": true,
+    "approved": false,
+    "runs": 0,
+    "published": false
+  }
+}

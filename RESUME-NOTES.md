@@ -1,44 +1,46 @@
-# Resume Notes - Twitter / X Profile & Tweets Scraper
+# Resume Notes — X (Twitter) Profile Scraper & Growth Monitor
 
-## Status
+## Current status
 
-Fixed by adding a reliable official API path and keeping the old no-login endpoint as a guarded fallback:
+The 1.1 candidate is locally complete and should remain private until bounded cloud verification passes.
 
-- `dataSource: "auto"` uses X API mode when `xApiBearerToken` is supplied.
-- `dataSource: "api"` requires `xApiBearerToken`.
-- `dataSource: "syndication"` keeps the previous no-login `syndication.twitter.com` parser.
-- The actor never saves or charges for blocked, empty, or rate-limited syndication responses.
+- Direct public X profile page is the default; no login, API key, browser, or proxy is required.
+- Official X API v2 remains an optional bring-your-own-token data source.
+- Direct HTTP is always attempted before one optional user-configured proxy retry.
+- Public-page mode returns exact profile totals plus up to 20 recent posts.
+- Price remains `$0.004` for each successfully saved profile, including available posts and monitoring fields.
+- Candidate defaults: 256 MB, no proxy, 300-second timeout.
 
-## Why this was needed
+## New product value
 
-The previous no-login syndication-only actor was structurally sound, but X returned 429 rate limits even with residential proxy rotation. That endpoint is not reliable enough to monetize on its own.
+- Recent post text, time, engagement, views, media, and pinned status
+- Per-profile recent engagement summaries
+- Named persistent watchlists with bounded history
+- Follower/post deltas, growth percentage, velocity, and posting pace
+- Bio, name, website, verification, and latest-post change detection
+- Conservative growth/change signals
+- JSON run report and formula-safe CSV report
+- Honest `detailed` versus `profile-only` quality labels
+- Strong US creator, brand, PR, and competitor-monitoring Store copy
 
-## What works now
+## Completed gates
 
-- Official X API v2 bearer token input: `xApiBearerToken` (secret)
-- API user lookup by username
-- API recent user tweets with public metrics and media expansions
-- Existing output shape retained
-- Profiles go to the default dataset
-- Tweets go to named dataset `tweets`
-- PAY_PER_EVENT `profile-scraped` @ `$0.004`
-- Charge only after profile/tweet data has been pushed
+- 6/6 regression tests
+- TypeScript typecheck and production build
+- Valid Apify input schema
+- Production dependency audit: zero known vulnerabilities
+- Live OpenAI direct-page parse: exact profile totals and five current posts
+- Two isolated live no-proxy runs: baseline then unchanged, observation count 2
+- Live Elon Musk direct-page checks: success without proxy
+- Measured local Node peak: about 121.1 MiB, leaving about 134.9 MiB at 256 MB
 
-## Remaining risk
+## Required cloud gate before publication
 
-- X API rate limits and available fields depend on the user's X API plan.
-- Syndication mode can still hit 429 and should be treated as best-effort.
-- API mode may not expose profile banner or likes count; those fields are set to `null` when unavailable.
+1. Create one staging build from the GitHub-pushed candidate.
+2. Run one default OpenAI profile at 256 MB, no proxy.
+3. Run the exact same input again to verify persistent comparison state.
+4. Require complete output, five recent posts, working JSON/CSV links, zero state-write failures, and peak memory below 230.4 MiB.
+5. Calculate recurring margin from the reported platform cost after Apify's 20% share; require at least 25%.
+6. Publish the exact verified build only if every gate passes. Keep the Actor private otherwise.
 
-## Recommended Apify test
-
-```json
-{
-  "dataSource": "api",
-  "xApiBearerToken": "YOUR_TOKEN",
-  "usernames": ["openai"],
-  "maxTweetsPerProfile": 5
-}
-```
-
-Expected: one profile record in the default dataset, up to five tweet records in `tweets`, and one `profile-scraped` charge event.
+No cloud build, paid verification, or Apify publication is included in the local work recorded here.
