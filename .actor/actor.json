@@ -2,7 +2,7 @@
   "actorSpecification": 1,
   "name": "twitter-x-profile-scraper",
   "title": "X (Twitter) Profile Scraper & Growth Monitor",
-  "description": "Public X profiles, recent posts, engagement metrics, follower growth, posting pace, change signals, and CSV reports. No login or API key required.",
+    "description": "Extract public X (Twitter) profiles, available recent posts and engagement metrics for creator, brand and competitor research. Track follower growth, posting pace and profile changes; export CSV/JSON reports. $4/1,000 saved profiles plus the start event. No login in public-page mode.",
   "version": "1.1",
   "buildTag": "latest",
   "categories": ["SOCIAL_MEDIA", "MARKETING"],

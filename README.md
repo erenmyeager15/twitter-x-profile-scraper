@@ -1,6 +1,6 @@
 # X (Twitter) Profile Scraper & Growth Monitor
 
-Turn public X profiles into structured creator, brand, and competitor intelligence. Extract exact profile totals, recent posts, engagement metrics, media, verification details, and website links—then schedule the same watchlist to measure follower growth, posting pace, and profile changes.
+Extract public X (Twitter) profiles for creator research, brand monitoring and competitor intelligence. Collect available profile totals, recent posts, engagement metrics, media, verification details and website links—then reuse a named watchlist to measure observed follower growth, posting pace and profile changes.
 
 **No X login or API key is required for the default public-page mode.** An official X API bearer token remains available as an optional bring-your-own-token path.
 
@@ -140,17 +140,19 @@ Every successful run provides:
 
 Use the dataset API with Google Sheets, Airtable, Make, Zapier, n8n, BI tools, or your own data pipeline.
 
-## Pricing
+## Pricing: Saved Profiles + Actor Start
 
-The Actor charges **$0.004 per successfully saved profile**, including its available recent posts and monitoring comparison.
+The undiscounted `profile-scraped` event costs **$0.004 per successfully saved profile** (`$4.00` per 1,000), including its available recent posts and monitoring comparison. The separate `apify-actor-start` event costs **$0.00005 per GB, minimum one event**, when the Actor starts.
 
-| Successful profiles | Event charge |
+| Successful profiles | Profile-event subtotal, before start fee or tier discounts |
 |---:|---:|
 | 1 | $0.004 |
 | 10 | $0.04 |
 | 25 | $0.10 |
 
-Failed or empty profiles are not intentionally charged. Always check the live Pricing tab for the current terms before a production run.
+Failed targets and empty responses that are not saved do not trigger `profile-scraped`. Profiles already saved before a partial failure retain their normal result charges. The Actor Start fee can still apply to empty or failed runs: Apify counts one start event per GB of memory, with at least one event. At the unchanged 256 MB default, that is `$0.00005` for the start event.
+
+For example, one successfully saved profile at the undiscounted rate has `$0.00405` in result-plus-start event charges at 256 MB. That is an event subtotal, not a guarantee about separate platform or optional third-party API costs. Check the [live Pricing tab](https://apify.com/fascinating_lentil/twitter-x-profile-scraper/pricing) for current subscription-tier discounts and platform-usage terms. Your own official X API access, if selected, is not supplied by this Actor.
 
 ## Reliability and cost controls
 
@@ -159,7 +161,7 @@ Failed or empty profiles are not intentionally charged. Always check the live Pr
 - Direct access is attempted first; Residential traffic is never enabled silently.
 - A user-configured proxy receives only one retry after direct access fails.
 - Monitoring history is bounded from 2 to 90 observations per profile.
-- A profile is charged only when its dataset record is successfully saved.
+- The `profile-scraped` result event is charged only when its dataset record is successfully saved; the separate Actor Start fee is not waived by an empty result.
 - If every target fails, the run fails visibly rather than reporting false success.
 
 Public websites can change. The Actor reports `dataQuality` so downstream workflows can distinguish complete post analytics from profile-only results.
